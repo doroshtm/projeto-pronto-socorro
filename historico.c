@@ -1,14 +1,14 @@
 #include "historico.h"
 
-struct historico_ {
-    struct procedimento_ *ultimoProcedimento;
-    int quantidadeProcedimentos;
+struct procedimento_ {
+    char texto[10];
+    PROCEDIMENTO *anterior;
 };
 
-typedef struct procedimento_ {
-    char texto[10];
-    struct procedimento_ *anterior;
-} PROCEDIMENTO;
+struct historico_ {
+    PROCEDIMENTO *ultimoProcedimento;
+    int quantidadeProcedimentos;
+};
 
 HISTORICO *historico_criar() {
     HISTORICO *novo = malloc(sizeof(HISTORICO));
@@ -112,4 +112,20 @@ bool historico_apagar(HISTORICO **historico) {
     free(*historico);
     *historico = NULL;
     return true;
+}
+
+int historico_getquantidade(HISTORICO *historico){
+    return historico->quantidadeProcedimentos;
+}
+
+PROCEDIMENTO *historico_getultimo(HISTORICO *historico){
+    return historico->ultimoProcedimento;
+}
+
+PROCEDIMENTO *procedimento_getanterior(PROCEDIMENTO *proc){
+    return proc->anterior;
+}
+
+PROCEDIMENTO *procedimento_gettexto(PROCEDIMENTO *proc){
+    return proc->texto;
 }

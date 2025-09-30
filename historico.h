@@ -4,6 +4,7 @@
     #include<stdlib.h>
 
     typedef struct historico_ HISTORICO;
+    typedef struct procedimento_ PROCEDIMENTO;
 
     HISTORICO *historico_criar();
     bool historico_apagar(HISTORICO **);
@@ -11,5 +12,9 @@
     bool historico_retirar(HISTORICO *);
     bool historico_cheio(HISTORICO *);
     bool historico_vazio(HISTORICO *);
+    int historico_getquantidade(HISTORICO *);
+    PROCEDIMENTO *historico_getultimo(HISTORICO *);
+    PROCEDIMENTO *procedimento_getanterior(PROCEDIMENTO *);
+    char *procedimento_gettexto(PROCEDIMENTO *);
 
 #endif

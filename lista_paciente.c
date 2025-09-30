@@ -2,10 +2,11 @@
 #include"lista_paciente.h"
 #include"historico.h"
 #include<stdlib.h>
+#include<stdio.h>
 
 typedef struct no_ {
     PACIENTE *paciente;
-    NO *proximo;
+    struct no_ *proximo;
 } NO;
 
 struct lista_paciente_ {
@@ -106,10 +107,6 @@ void lista_paciente_listar(LISTA_PACIENTE *lista) {
     printf("\n");
 }
 
-int lista_paciente_gerar_id_unico(LISTA_PACIENTE *lista) {
-    return paciente_getid(lista->ultimo) + 1;
-}
-
 bool lista_paciente_apagar(LISTA_PACIENTE **lista) {
     if(lista == NULL || *lista == NULL) {
         return false;
@@ -127,5 +124,36 @@ bool lista_paciente_apagar(LISTA_PACIENTE **lista) {
 
     free(*lista);
     *lista = NULL;
+    return true;
+}
+
+bool salvar_lista(LISTA_PACIENTE *lista){
+    //Salvar lista
+    FILE *f = fopen("lista.json", "w");
+    if(f == NULL){
+        return false;
+    }
+    NO *atual = lista->primeiro;
+    if(atual != NULL && atual->paciente != NULL) {
+        fprintf(f,"{\n");
+        while(atual != NULL) {
+            fprintf(f,"\t\"id\": \"%d\",\n", paciente_getid(atual->paciente));
+            fprintf(f,"\t\"nome\": \"%s\",\n", paciente_getnome(atual->paciente));
+            fprintf(f,"\t\"histórico\": {\n");
+            PROCEDIMENTO *procedimento = historico_getultimo(paciente_gethistorico(atual->paciente));
+            for(int j=0; j< historico_getquantidade(paciente_gethistorico(atual->paciente)); j++){
+                fprintf(f, "\"procedimento\": \"%s\"", procedimento_gettexto(procedimento));
+                if(j < historico_getquantidade(paciente_gethistorico(atual->paciente))-1){
+                    fprintf(f,",\n");
+                }
+                procedimento = procedimento_getanterior(procedimento);
+            }
+            fprintf(f,"\t\n},\n");
+            atual = atual->proximo;
+        }
+        fseek(f,-1,SEEK_CUR);
+        fprintf(f,"\n}");
+    }
+    fclose(f);
     return true;
 }

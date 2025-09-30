@@ -11,7 +11,9 @@
     PACIENTE *triagem_remover_paciente(TRIAGEM *);
     bool triagem_fila_cheia(TRIAGEM *);
     bool triagem_fila_vazia(TRIAGEM *);
-    void triagem_mostrar_fila(TRIAGEM *, LISTA_PACIENTE *);
+    void triagem_mostrar_fila(TRIAGEM *);
     bool triagem_apagar(TRIAGEM **);
+    int triagem_getproximo(TRIAGEM *);
+    bool salvar_fila(TRIAGEM *);
 
 #endif

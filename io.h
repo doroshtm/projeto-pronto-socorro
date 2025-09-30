@@ -2,9 +2,10 @@
     #define IO_H
 
     #include "paciente.h"
-    #include "historico.h"
+    #include "triagem.h"
+    #include "lista_paciente.h"
 
-     carregar_dados();
-    bool salvar_dados(PACIENTE *pacientes, HISTORICO *historicos);
+    void carregar_dados(LISTA_PACIENTE *lista, TRIAGEM *triagem);
+    bool salvar_dados(PACIENTE *lista, TRIAGEM *triagem);
 
 #endif

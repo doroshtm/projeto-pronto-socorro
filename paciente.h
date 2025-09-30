@@ -2,6 +2,7 @@
     #define PACIENTE_H
     #include<stdbool.h>
     #include"intencadeado.h"
+    #include "historico.h"
 
     typedef struct paciente_ PACIENTE;
 

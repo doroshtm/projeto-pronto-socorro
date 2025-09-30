@@ -10,6 +10,6 @@
     bool lista_paciente_remover(LISTA_PACIENTE *, PACIENTE *);
     PACIENTE *lista_paciente_buscar(LISTA_PACIENTE *, int id);
     void lista_paciente_listar(LISTA_PACIENTE *);
-    int lista_paciente_gerar_id_unico(LISTA_PACIENTE *);
+    bool salvar_lista( LISTA_PACIENTE *);
 
 #endif
