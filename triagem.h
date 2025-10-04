@@ -15,5 +15,6 @@
     bool triagem_apagar(TRIAGEM **);
     int triagem_getproximo(TRIAGEM *);
     bool salvar_fila(TRIAGEM *);
+    void carregar_fila(TRIAGEM *, LISTA_PACIENTE *);
 
 #endif

@@ -16,5 +16,6 @@
     PROCEDIMENTO *historico_getultimo(HISTORICO *);
     PROCEDIMENTO *procedimento_getanterior(PROCEDIMENTO *);
     char *procedimento_gettexto(PROCEDIMENTO *);
+    void historico_inverter(HISTORICO *);
 
 #endif

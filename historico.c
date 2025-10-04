@@ -1,4 +1,7 @@
 #include "historico.h"
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
 
 struct procedimento_ {
     char texto[10];
@@ -36,7 +39,7 @@ bool historico_inserir(HISTORICO *historico, char *procedimento) {
         if(novoProcedimento == NULL) {
             return false;
         }
-        strncpy(novoProcedimento->texto, procedimento, 100);
+        strncpy(novoProcedimento->texto, procedimento, 10);
         novoProcedimento->anterior = historico->ultimoProcedimento;
         historico->ultimoProcedimento = novoProcedimento;
     }
@@ -126,6 +129,22 @@ PROCEDIMENTO *procedimento_getanterior(PROCEDIMENTO *proc){
     return proc->anterior;
 }
 
-PROCEDIMENTO *procedimento_gettexto(PROCEDIMENTO *proc){
+char *procedimento_gettexto(PROCEDIMENTO *proc){
     return proc->texto;
+}
+
+void inverter(HISTORICO *historico){
+    if(historico == NULL){
+        return;
+    }
+    HISTORICO *aux = (HISTORICO *)malloc(sizeof(HISTORICO));
+    if(aux == NULL){
+        return;
+    }
+    for(int i =0; i< historico->quantidadeProcedimentos; i++){
+        historico_inserir(aux, historico->ultimoProcedimento->texto);
+        historico_retirar(historico);
+    }
+    free(historico);
+    historico = aux;
 }

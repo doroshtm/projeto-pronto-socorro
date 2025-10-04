@@ -1,6 +1,7 @@
 #include"triagem.h"
 #include<stdlib.h>
-#include <stdio.h>
+#include<stdio.h>
+#include<string.h>
 
 // a triagem é uma fila (FIFO) de pacientes
 struct triagem_ {
@@ -92,22 +93,30 @@ bool salvarDados(TRIAGEM *triagem){
                 continue;
             }
             fprintf(f,"\t\"id\": \"%d\",\n",paciente_getid(paciente));
-            fprintf(f,"\t\"nome\": \"%s\",\n",paciente_getnome(paciente));
-            fprintf(f,"\t\"histórico\": {\n");
-            PROCEDIMENTO *procedimento = historico_getultimo(paciente_gethistorico(paciente));
-            for(int j=0; j < historico_getquantidade(paciente_gethistorico(paciente)); j++){
-                fprintf(f,"\t\t\"procedimento\": \"%s\"", procedimento_gettexto(procedimento));
-                if(j < historico_getquantidade(paciente_gethistorico(paciente))-1){
-                    fprintf(f,",\n");
-                }
-                procedimento = procedimento_getanterior(procedimento);
-            }
             fprintf(f,"\t\n},\n");
         }
         fseek(f,-1,SEEK_CUR);
-        fprintf(f,"\n}");
-        fprintf(f,"\n}");
+        fprintf(f,"\n}\n}");
     }
     fclose(f);
     return true;
+}
+
+void carregar_fila(TRIAGEM *triagem, LISTA_PACIENTE *lista){
+    if(triagem != NULL){
+        FILE *f = fopen("fila.json", "r");
+        if(f == NULL){
+            return;
+        }
+        char buffer[101];
+        int id;
+        PACIENTE *paciente;
+        while( fgets(buffer,100,f) != NULL){
+            if(strstr(buffer, "\"id\":")){
+                sscanf(buffer,"%*[^:]: %d", &id);
+            }
+            paciente = lista_paciente_buscar(lista, id);
+            triagem_inserir_paciente(triagem, paciente);
+        }
+    }
 }

@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include"triagem.h"
-#include"io.h"
 #include"lista_paciente.h"
 
 bool apagar_dados(LISTA_PACIENTE *lista_pacientes, TRIAGEM *triagem);
@@ -35,7 +34,7 @@ int main(void) {
                 printf("Insira o nome do paciente: ");
                 scanf("%s", nome);
 
-                PACIENTE *paciente = paciente_criar(nome);
+                PACIENTE *paciente = paciente_criar(nome, lista_pacientes);
                 if(paciente == NULL) {
                     printf("ERRO ao criar paciente!\n");
                     printf("------------REGISTRO DE PACIENTE------------\n\n");

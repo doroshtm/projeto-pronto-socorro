@@ -1,5 +1,8 @@
 #include"paciente.h"
 #include"historico.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
 struct paciente_ {
     int id;
@@ -7,12 +10,14 @@ struct paciente_ {
     HISTORICO *historico;
 };
 
-PACIENTE *paciente_criar(char nome[100]) {
+PACIENTE *paciente_criar(char nome[100], LISTA_PACIENTE *lista, int id) {
     PACIENTE *novo = malloc(sizeof(PACIENTE));
     if (novo == NULL) {
         return NULL;
     }
-    novo->id = gerar_id_unico();
+    if(id<-1){//A partir de -2 para baixo conta como se o paciente existisse e será carregado
+        novo->id = lista_paciente_gerar_id_unico(lista);
+    }
     strncpy(novo->nome, nome, 100);
     novo->historico = historico_criar();
     return novo;
@@ -39,7 +44,7 @@ char *paciente_getnome(PACIENTE *paciente) {
     return paciente->nome;
 }
 
-paciente_gethistorico(PACIENTE *paciente) {
+HISTORICO *paciente_gethistorico(PACIENTE *paciente) {
     if (paciente == NULL) {
         return NULL;
     }

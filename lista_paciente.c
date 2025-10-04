@@ -1,8 +1,7 @@
 #include"paciente.h"
-#include"lista_paciente.h"
-#include"historico.h"
 #include<stdlib.h>
 #include<stdio.h>
+#include<string.h>
 
 typedef struct no_ {
     PACIENTE *paciente;
@@ -107,6 +106,10 @@ void lista_paciente_listar(LISTA_PACIENTE *lista) {
     printf("\n");
 }
 
+int lista_paciente_gerar_id_unico(LISTA_PACIENTE *lista) {
+    return paciente_getid(lista->ultimo->paciente) + 1;
+}
+
 bool lista_paciente_apagar(LISTA_PACIENTE **lista) {
     if(lista == NULL || *lista == NULL) {
         return false;
@@ -156,4 +159,35 @@ bool salvar_lista(LISTA_PACIENTE *lista){
     }
     fclose(f);
     return true;
+}
+
+void carregar_lista(LISTA_PACIENTE *lista){
+    if(lista!=NULL){
+        FILE *f = fopen("lista.json", "r");
+        if(f == NULL){
+            return;
+        }
+        char buffer[101], nome[101], procedimento[11];
+        int id;
+        PACIENTE *paciente;
+        while(fgets(buffer, 100, f) != NULL){
+            if(strstr(buffer, "\"id\":")){
+                sscanf(buffer, "%*[^:]: %d", &id);
+            }else if(strstr(buffer, "\"nome\":")){
+                sscanf(buffer, "%*[^:]: %s", nome);
+                paciente = paciente_criar(nome, lista, -2);
+            }else if(strstr(buffer, "\"historico\":")){
+                while(fgets(buffer, 100, f)!="}"){
+                    if(strstr(buffer, "\"procedimento\":")){
+                        sscanf(buffer, "%*[^:]: %s", procedimento);
+                        historico_inserir(paciente_gethistorico(paciente), procedimento);
+                    }
+                }
+                historico_inverter(paciente_gethistorico(paciente));//O histórico pego dos dados vem invertido
+                lista_paciente_inserir(lista, paciente);
+                paciente = NULL;
+                free(paciente);
+            }
+        }
+    }
 }
