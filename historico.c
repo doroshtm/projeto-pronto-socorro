@@ -138,13 +138,22 @@ void inverter(HISTORICO *historico){
         return;
     }
     HISTORICO *aux = (HISTORICO *)malloc(sizeof(HISTORICO));
-    if(aux == NULL){
+    HISTORICO *aux2 = (HISTORICO*)malloc(sizeof(HISTORICO));
+    if(aux == NULL || aux2==NULL){
         return;
     }
     for(int i =0; i< historico->quantidadeProcedimentos; i++){
         historico_inserir(aux, historico->ultimoProcedimento->texto);
         historico_retirar(historico);
     }
-    free(historico);
-    historico = aux;
+    for(int i =0; i< aux->quantidadeProcedimentos; i++){
+        historico_inserir(aux2, aux->ultimoProcedimento->texto);
+        historico_retirar(aux);
+    }
+    for(int i =0; i< historico->quantidadeProcedimentos; i++){
+        historico_inserir(historico, aux2->ultimoProcedimento->texto);
+        historico_retirar(aux2);
+    }
+    free(aux);
+    free(aux2);
 }
