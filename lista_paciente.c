@@ -175,7 +175,7 @@ void carregar_lista(LISTA_PACIENTE *lista){
                 sscanf(buffer, "%*[^:]: %d", &id);
             }else if(strstr(buffer, "\"nome\":")){
                 sscanf(buffer, "%*[^:]: %s", nome);
-                paciente = paciente_criar(nome, lista, -2);
+                paciente = paciente_criar(nome, lista, id);
             }else if(strstr(buffer, "\"historico\":")){
                 while(fgets(buffer, 100, f)!="}"){
                     if(strstr(buffer, "\"procedimento\":")){

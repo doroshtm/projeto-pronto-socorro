@@ -11,6 +11,7 @@
     bool historico_inserir(HISTORICO *, char *);
     bool historico_retirar(HISTORICO *);
     bool historico_cheio(HISTORICO *);
+    char **historico_consultar_procedimento(HISTORICO *);
     bool historico_vazio(HISTORICO *);
     int historico_getquantidade(HISTORICO *);
     PROCEDIMENTO *historico_getultimo(HISTORICO *);

@@ -15,8 +15,10 @@ PACIENTE *paciente_criar(char nome[100], LISTA_PACIENTE *lista, int id) {
     if (novo == NULL) {
         return NULL;
     }
-    if(id<-1){//A partir de -2 para baixo conta como se o paciente existisse e será carregado
+    if(id<0){
         novo->id = lista_paciente_gerar_id_unico(lista);
+    }else{
+        novo->id = id;
     }
     strncpy(novo->nome, nome, 100);
     novo->historico = historico_criar();
