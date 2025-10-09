@@ -156,11 +156,12 @@ bool salvar_lista(LISTA_PACIENTE *lista){
                 }
                 procedimento = procedimento_getanterior(procedimento);
             }
-            fprintf(f,"\t\n},\n");
+            fprintf(f,"\t\n}");
             atual = atual->proximo;
+            if(atual != NULL){
+                fprintf(f, ",\n");
+            }
         }
-        fseek(f,-1,SEEK_CUR);
-        fprintf(f,"\n}");
     }
     fclose(f);
     return true;

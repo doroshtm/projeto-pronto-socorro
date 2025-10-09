@@ -94,10 +94,11 @@ bool salvar_fila(TRIAGEM *triagem){
                 continue;
             }
             fprintf(f,"\t\"id\": \"%d\",\n",paciente_getid(paciente));
-            fprintf(f,"\t\n},\n");
+            fprintf(f,"\n}");
+            if(i<triagem->proximo-1){
+                fprintf(f,",\n");
+            }
         }
-        fseek(f,-1,SEEK_CUR);
-        fprintf(f,"\n}\n}");
     }
     fclose(f);
     return true;

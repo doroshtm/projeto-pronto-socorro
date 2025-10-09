@@ -30,7 +30,7 @@ int main(void) {
     do {
         // Escolhemos adicionar mais uma opção, "3-Inserir paciente na fila", para o caso de querermos inserir um paciente já cadastrado na lista, sem ter que mudar o funcionamento do TAD lista_paciente.
         printf("\nMenu:\n1-Registrar paciente\n2-Registrar óbito do paciente\n3-Inserir paciente na fila\n4-Adicionar procedimento ao histórico\n5-Desfazer procedimento do histórico\n6-Chamar paciente para atendimento\n7-Mostrar fila de espera\n8-Mostrar histórico do paciente\n9-Sair\n10-Limpar terminal(opcional)\n");
-        printf("Digite a action desejada: ");
+        printf("Digite a opção desejada: ");
         scanf("%d",&op);
         PACIENTE *paciente;
         int id;
