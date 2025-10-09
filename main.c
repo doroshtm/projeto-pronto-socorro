@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include"triagem.h"
+#include"paciente.h"
+#include"historico.h"
 #include"lista_paciente.h"
 
 bool apagar_dados(LISTA_PACIENTE *lista_pacientes, TRIAGEM *triagem);
@@ -26,9 +28,12 @@ int main(void) {
     printf("Bien venido manito!");
     int op = 0;
     do {
-        printf("\nMenu:\n1-Registrar paciente\n2-Dar alta ao paciente\n3-Adicionar procedimento ao histórico\n4-Desfazer procedimento do histórico\n5-Chamar paciente para atendimento\n6-Mostrar fila de espera\n7-Mostrar histórico do paciente\n8-Sair\n9-Limpar terminal(opcional)\n");
+        // Escolhemos adicionar mais uma opção, "3-Inserir paciente na fila", para o caso de querermos inserir um paciente já cadastrado na lista, sem ter que mudar o funcionamento do TAD lista_paciente.
+        printf("\nMenu:\n1-Registrar paciente\n2-Registrar óbito do paciente\n3-Inserir paciente na fila\n4-Adicionar procedimento ao histórico\n5-Desfazer procedimento do histórico\n6-Chamar paciente para atendimento\n7-Mostrar fila de espera\n8-Mostrar histórico do paciente\n9-Sair\n10-Limpar terminal(opcional)\n");
         printf("Digite a action desejada: ");
         scanf("%d",&op);
+        PACIENTE *paciente;
+        int id;
         switch (op) {
             case 1:
                 printf("------------REGISTRO DE PACIENTE------------\n");
@@ -36,7 +41,7 @@ int main(void) {
                 printf("Insira o nome do paciente: ");
                 scanf("%s", nome);
 
-                PACIENTE *paciente = paciente_criar(nome, lista_pacientes, -1);
+                paciente = paciente_criar(nome, lista_pacientes, -1);
                 if(paciente == NULL) {
                     printf("ERRO ao criar paciente!\n");
                     printf("------------REGISTRO DE PACIENTE------------\n\n");
@@ -50,7 +55,7 @@ int main(void) {
                     break;
                 }
 
-                int id = paciente_getid(paciente);
+                id = paciente_getid(paciente);
                 ok = triagem_inserir_paciente(triagem, paciente);
                 if(!ok) {
                     printf("ERRO ao inserir paciente na triagem!\n");
@@ -58,32 +63,29 @@ int main(void) {
                     break;
                 }
 
-                printf("Paciente de ID %d inserido com sucesso!", id);
+                printf("Paciente de ID %d registrado e inserido na fila de espera com sucesso!\n", id);
                 printf("------------REGISTRO DE PACIENTE------------\n\n");
                 break;
             case 2:
                 printf("------------SISTEMA DE MORTE------------\n");
-                // remover paciente da lista de pacientes
-                // CHECAR SE NÃO ESTÁ NA TRIAGEM
+                
                 printf("Id do paciente: ");
-                int id2;
-                scanf("%d", &id2);
-                PACIENTE *paciente2 = lista_paciente_buscar(lista_pacientes,id2);
-                if(paciente2 == NULL) {
+                scanf("%d",&id);
+                paciente = lista_paciente_buscar(lista_pacientes, id);
+                if(paciente == NULL) {
                     printf("ERRO ao procurar paciente!\n");
                     printf("------------SISTEMA DE MORTE------------\n\n");
                     break;
                 }
-                // verificar se o paciente está na triagem? Apenas remover da triagem?
                 
-                ok = lista_paciente_remover(lista_pacientes, paciente2);
+                ok = lista_paciente_remover(lista_pacientes, paciente);
                 if(!ok) {
                     printf("ERRO ao remover paciente da lista de pacientes!\n");
                     printf("------------SISTEMA DE MORTE------------\n\n");
                     break;
                 }
                 
-                ok = paciente_apagar(&paciente2);
+                ok = paciente_apagar(&paciente);
                 if(!ok) {
                     printf("ERRO ao apagar paciente!\n");
                     printf("------------SISTEMA DE MORTE------------\n\n");
@@ -95,27 +97,60 @@ int main(void) {
 
                 break;
             case 3:
+                printf("------------INSERÇÃO DE PACIENTE NA FILA------------\n");
+                printf("Essa função é para inserir um paciente já registrado no cadastro. Se acabou de registrar um paciente, ele já foi inserido na fila automaticamente. Insira -1 para voltar se for o caso.\n");
+                printf("Id do paciente: ");
+                scanf("%d",&id);
+                paciente = lista_paciente_buscar(lista_pacientes, id);
+                if(paciente == NULL) {
+                    printf("ERRO ao procurar paciente!\n");
+                    printf("------------INSERÇÃO DE PACIENTE NA FILA------------\n\n");
+                    break;
+                }
+
+                if(triagem_fila_cheia(triagem)) {
+                    printf("ERRO ao inserir paciente na triagem: fila cheia!\n");
+                    printf("------------INSERÇÃO DE PACIENTE NA FILA------------\n\n");
+                    break;
+                }
+
+                ok = triagem_inserir_paciente(triagem, paciente);
+                if(!ok) {
+                    printf("ERRO ao inserir paciente na triagem!\n");
+                    printf("------------INSERÇÃO DE PACIENTE NA FILA------------\n\n");
+                    break;
+                }
+                printf("Paciente %s (ID %d) inserido na triagem com sucesso!\n", paciente_getnome(paciente), paciente_getid(paciente));
+                printf("------------INSERÇÃO DE PACIENTE NA FILA------------\n\n");
+                break;
+            case 4:
                 printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n");
                 printf("Insira o id do paciente: ");
-                int id3;
-                scanf("%d",&id3);
-                PACIENTE *paciente3 = lista_paciente_buscar(lista_pacientes, id3);
-                if(paciente3 == NULL) {
+                scanf("%d",&id);
+                paciente = lista_paciente_buscar(lista_pacientes, id);
+                if(paciente == NULL) {
                     printf("ERRO ao procurar paciente!\n");
+                    printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n\n");
+                    break;
+                }
+
+                if(historico_cheio(paciente_gethistorico(paciente))) {
+                    printf("ERRO ao inserir procedimento: histórico cheio!\n");
                     printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n\n");
                     break;
                 }
 
                 printf("Procedimento: ");
                 char procedimento[100];
-                if(fscanf(stdin, "%99s", procedimento) != 1) {
+                
+                if(fscanf(stdin, " %99[^\n]", procedimento) != 1) {
                     printf("ERRO ao ler procedimento!\n");
                     printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n\n");
                     break;
                 }
 
-                if(!historico_inserir(paciente_gethistorico(paciente3), procedimento)) {
-                    printf("ERRO ao inserir histórico do paciente!");
+                if(!historico_inserir(paciente_gethistorico(paciente), procedimento)) {
+                    printf("ERRO ao inserir histórico do paciente!\n");
                     printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n\n");
                     break;
                 }
@@ -123,19 +158,24 @@ int main(void) {
                 printf("Procedimento adicionado ao histórico do paciente!\n");
                 printf("------------ADIÇÃO DE PROCEDIMENTO AO HISTÓRICO------------\n\n");
                 break;
-            case 4:
+            case 5:
                 printf("------------DESFAZER PROCEDIMENTO DO HISTÓRICO------------\n");
                 printf("Id do paciente: ");
-                int id4;
-                scanf("%d",&id4);
-                PACIENTE *paciente4 = lista_paciente_buscar(lista_pacientes, id4);
-                if(paciente4 == NULL) {
+                scanf("%d",&id);
+                paciente = lista_paciente_buscar(lista_pacientes, id);
+                if(paciente == NULL) {
                     printf("ERRO ao procurar paciente!\n");
                     printf("------------DESFAZER PROCEDIMENTO DO HISTÓRICO------------\n\n");
                     break;
                 }
-                if(!historico_retirar(paciente_gethistorico(paciente4))) {
-                    printf("ERRO ao retirar procedimento do histórico do paciente!");
+                if(historico_vazio(paciente_gethistorico(paciente))) {
+                    printf("ERRO ao retirar procedimento: histórico vazio!\n");
+                    printf("------------DESFAZER PROCEDIMENTO DO HISTÓRICO------------\n\n");
+                    break;
+                }
+
+                if(!historico_retirar(paciente_gethistorico(paciente))) {
+                    printf("ERRO ao retirar procedimento do histórico do paciente!\n");
                     printf("------------DESFAZER PROCEDIMENTO DO HISTÓRICO------------\n\n");
                     break;
                 }
@@ -143,55 +183,71 @@ int main(void) {
                 printf("Procedimento desfeito do histórico do paciente!\n");
                 printf("------------DESFAZER PROCEDIMENTO DO HISTÓRICO------------\n\n");
                 break;
-            case 5:
+            case 6:
                 printf("------------CHAMAR PACIENTE PARA ATENDIMENTO------------\n");
-                PACIENTE *paciente5;
                 if(triagem_fila_vazia(triagem)) {
                     printf("ERRO ao chamar paciente: triagem vazia!\n");
                     printf("------------CHAMAR PACIENTE PARA ATENDIMENTO------------\n\n");
                     break;
                 }
 
-                paciente5 = triagem_remover_paciente(triagem);
-                if(paciente5 == NULL) {
+                paciente = triagem_remover_paciente(triagem);
+                if(paciente == NULL) {
                     printf("ERRO ao remover paciente da triagem!\n");
                     printf("------------CHAMAR PACIENTE PARA ATENDIMENTO------------\n\n");
                     break;
                 }
 
-                printf("Paciente %s (ID %d) removido da triagem!\n", paciente_getnome(paciente5), paciente_getid(paciente5));
+                printf("Paciente %s (ID %d) removido da triagem!\n", paciente_getnome(paciente), paciente_getid(paciente));
                 
                 printf("------------CHAMAR PACIENTE PARA ATENDIMENTO------------\n\n");
                 break;
-            case 6:
+            case 7:
                 printf("------------FILA DE ESPERA------------\n");
                 triagem_mostrar_fila(triagem);
                 printf("------------FILA DE ESPERA------------\n\n");
                 break;
-            case 7:
+            case 8:
                 printf("------------HISTÓRICO DO PACIENTE------------\n");
                 printf("ID do paciente: ");
-                int id5;
-                scanf("%d", &id5);
-                PACIENTE *paciente100 = lista_paciente_buscar(lista_pacientes,id5);
+                scanf("%d",&id);
+                paciente = lista_paciente_buscar(lista_pacientes,id);
                 HISTORICO *historico = paciente_gethistorico(paciente);
                 if(historico == NULL) {
                     printf("ERRO ao obter histórico de paciente!\n");
                     printf("------------HISTÓRICO DO PACIENTE------------\n\n");
                     break;
                 }
+                if(historico_vazio(historico)) {
+                    printf("ERRO ao obter histórico de paciente: histórico vazio!\n");
+                    printf("------------HISTÓRICO DO PACIENTE------------\n\n");
+                    break;
+                }
 
-                char **procedimentos = malloc(sizeof(char)*10);
+                char **procedimentos = malloc(10*sizeof(char *));
+                if(procedimentos == NULL) {
+                    printf("ERRO ao alocar memória para procedimentos!\n");
+                    printf("------------HISTÓRICO DO PACIENTE------------\n\n");
+                    break;
+                }
                 procedimentos = historico_consultar_procedimento(historico);
+                if(procedimentos == NULL) {
+                    printf("ERRO ao consultar procedimentos do histórico!\n");
+                    printf("------------HISTÓRICO DO PACIENTE------------\n\n");
+                    break;
+                }
 
-                for(int i = 0; i < 10; ++i) {
-                    printf("Procedimento %d: %s\n",10-i,procedimentos[i]);
+                int quantidade = historico_getquantidade(historico);
+                for(int i = 0; i < quantidade; ++i) {
+                    if(procedimentos[i] == NULL) {
+                        break;
+                    }
+                    printf("Procedimento %d: %s\n",quantidade-i, procedimentos[i]);
                 }
                 printf("------------HISTÓRICO DO PACIENTE------------\n\n");
-
                 
                 break;
-            case 8:
+            case 9:
             // sair (SALVAR)
                 salvar_fila(triagem);
                 salvar_lista(lista_pacientes);
@@ -201,7 +257,7 @@ int main(void) {
             default:
                 break;
         }
-    }while(op != 8);
+    }while(op != 9);
 }
 
 bool apagar_dados(LISTA_PACIENTE *lista_pacientes, TRIAGEM *triagem) {

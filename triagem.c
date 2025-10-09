@@ -32,13 +32,14 @@ PACIENTE *triagem_remover_paciente(TRIAGEM *triagem) {
     if(triagem == NULL || triagem->proximo == 0) {
         return NULL;
     }
+    PACIENTE *removido = triagem->pacientes[0];
     
     // Desloca os pacientes para remover o primeiro da fila
     for(int i = 0; i < triagem->proximo - 1; ++i) {
         triagem->pacientes[i] = triagem->pacientes[i + 1];
     }
     --triagem->proximo;
-    return(triagem->pacientes[triagem->proximo]);
+    return removido;
 }
 
 bool triagem_fila_cheia(TRIAGEM *triagem) {
@@ -79,7 +80,7 @@ int triagem_getproximo(TRIAGEM *triagem){
     return triagem->proximo;
 }
 
-bool salvarDados(TRIAGEM *triagem){
+bool salvar_fila(TRIAGEM *triagem){
     //Salvar fila
     FILE *f = fopen("fila.json", "w");
     if(f == NULL){

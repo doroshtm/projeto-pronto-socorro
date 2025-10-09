@@ -32,10 +32,13 @@ bool lista_paciente_inserir(LISTA_PACIENTE *lista, PACIENTE *paciente) {
         return false;
     }
     novoNo->paciente = paciente;
-    novoNo->proximo = lista->primeiro;
+    novoNo->proximo = NULL;
     if(lista->primeiro == NULL) {
         lista->primeiro = novoNo;
+    } else {
+        lista->ultimo->proximo = novoNo;
     }
+    
     lista->ultimo = novoNo;
 
     return true;
@@ -51,7 +54,9 @@ bool lista_paciente_remover(LISTA_PACIENTE *lista, PACIENTE *paciente) {
 
     while(atual != NULL) {
         if(atual->paciente == paciente) {
+            printf("aqui...");
             if(anterior == NULL) {
+                printf("aqui2...");
                 lista->primeiro = atual->proximo;
             }else {
                 anterior->proximo = atual->proximo;
@@ -107,7 +112,7 @@ void lista_paciente_listar(LISTA_PACIENTE *lista) {
 }
 
 int lista_paciente_gerar_id_unico(LISTA_PACIENTE *lista) {
-    return paciente_getid(lista->ultimo->paciente) + 1;
+    return lista->ultimo == NULL ? 0 : paciente_getid(lista->ultimo->paciente) + 1;
 }
 
 bool lista_paciente_apagar(LISTA_PACIENTE **lista) {
@@ -177,7 +182,7 @@ void carregar_lista(LISTA_PACIENTE *lista){
                 sscanf(buffer, "%*[^:]: %s", nome);
                 paciente = paciente_criar(nome, lista, id);
             }else if(strstr(buffer, "\"historico\":")){
-                while(fgets(buffer, 100, f)!="}"){
+                while(fgets(buffer, 100, f) != NULL && !strstr(buffer, "}")){
                     if(strstr(buffer, "\"procedimento\":")){
                         sscanf(buffer, "%*[^:]: %s", procedimento);
                         historico_inserir(paciente_gethistorico(paciente), procedimento);

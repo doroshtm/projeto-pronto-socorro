@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "historico.h": "c",
+        "paciente.h": "c"
+    }
+}

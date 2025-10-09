@@ -10,7 +10,7 @@ struct paciente_ {
     HISTORICO *historico;
 };
 
-PACIENTE *paciente_criar(char nome[100], LISTA_PACIENTE *lista, int id) {
+PACIENTE *paciente_criar(char nome[], LISTA_PACIENTE *lista, int id) {
     PACIENTE *novo = malloc(sizeof(PACIENTE));
     if (novo == NULL) {
         return NULL;

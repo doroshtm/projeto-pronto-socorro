@@ -4,7 +4,7 @@
 #include<stdlib.h>
 
 struct procedimento_ {
-    char texto[10];
+    char texto[101];
     PROCEDIMENTO *anterior;
 };
 
@@ -30,6 +30,7 @@ bool historico_inserir(HISTORICO *historico, char *procedimento) {
             return false;
         }
     }
+    printf("Inserindo procedimento: %s\n", procedimento);
     if(historico_cheio(historico)) {
         return false;
     }
@@ -39,7 +40,8 @@ bool historico_inserir(HISTORICO *historico, char *procedimento) {
         if(novoProcedimento == NULL) {
             return false;
         }
-        strncpy(novoProcedimento->texto, procedimento, 10);
+        strncpy(novoProcedimento->texto, procedimento, 100);
+        novoProcedimento->texto[100] = '\0';
         novoProcedimento->anterior = historico->ultimoProcedimento;
         historico->ultimoProcedimento = novoProcedimento;
     }
@@ -65,13 +67,16 @@ bool historico_retirar(HISTORICO *historico) {
 }
 
 char **historico_consultar_procedimento(HISTORICO *historico) {
-    if(historico == NULL) {
+    if(historico == NULL || historico_vazio(historico)) {
         return NULL;
     }
     
     char **procedimentos = malloc(10 * sizeof(char *));
     if(procedimentos == NULL) {
         return NULL;
+    }
+    for(int i = 0; i < 10; ++i) {
+        procedimentos[i] = NULL;
     }
 
     int i = 0;
@@ -133,7 +138,7 @@ char *procedimento_gettexto(PROCEDIMENTO *proc){
     return proc->texto;
 }
 
-void inverter(HISTORICO *historico){
+void historico_inverter(HISTORICO *historico){
     if(historico == NULL){
         return;
     }
