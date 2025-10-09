@@ -197,7 +197,6 @@ void carregar_lista(LISTA_PACIENTE *lista){
                 while(fgets(buffer, 100, f) != NULL && !strstr(buffer, "}")){
                     if(strstr(buffer, "\"procedimento\":")){
                         sscanf(buffer, "%*[^:]: \"%[^\"]", procedimento);
-                        printf("Procedimento extraído: %s\n", procedimento);
                         historico_inserir(paciente_gethistorico(paciente), procedimento);
                     }
                 }

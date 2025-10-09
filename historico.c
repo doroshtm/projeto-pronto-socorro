@@ -30,7 +30,6 @@ bool historico_inserir(HISTORICO *historico, char *procedimento) {
             return false;
         }
     }
-    printf("Inserindo procedimento: %s\n", procedimento);
     if(historico_cheio(historico)) {
         return false;
     }
