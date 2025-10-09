@@ -142,27 +142,38 @@ bool salvar_lista(LISTA_PACIENTE *lista){
         return false;
     }
     NO *atual = lista->primeiro;
+    fprintf(f, "[");
     if(atual != NULL && atual->paciente != NULL) {
-        fprintf(f,"{\n");
         while(atual != NULL) {
-            fprintf(f,"\t\"id\": \"%d\",\n", paciente_getid(atual->paciente));
-            fprintf(f,"\t\"nome\": \"%s\",\n", paciente_getnome(atual->paciente));
-            fprintf(f,"\t\"histórico\": {\n");
+            fprintf(f,"\n\t{");
+            fprintf(f,"\n\t\t\"id\": %d,\n", paciente_getid(atual->paciente));
+            fprintf(f,"\t\t\"nome\": \"%s\",\n", paciente_getnome(atual->paciente));
+            fprintf(f,"\t\t\"histórico\": {");
             PROCEDIMENTO *procedimento = historico_getultimo(paciente_gethistorico(atual->paciente));
             for(int j=0; j< historico_getquantidade(paciente_gethistorico(atual->paciente)); j++){
-                fprintf(f, "\"procedimento\": \"%s\"", procedimento_gettexto(procedimento));
-                if(j < historico_getquantidade(paciente_gethistorico(atual->paciente))-1){
-                    fprintf(f,",\n");
+                if(j==0){
+                    fprintf(f, "\n");
                 }
+                fprintf(f, "\t\t\t\"procedimento\": \"%s\"", procedimento_gettexto(procedimento));
+                if(j < historico_getquantidade(paciente_gethistorico(atual->paciente))-1){
+                    fprintf(f,",");
+                }
+                fprintf(f, "\n");
                 procedimento = procedimento_getanterior(procedimento);
+                if(j == historico_getquantidade(paciente_gethistorico(atual->paciente))-1){
+                    fprintf(f, "\t\t");
+                }
             }
-            fprintf(f,"\t\n}");
+            fprintf(f,"}\n");
             atual = atual->proximo;
+            fprintf(f, "\t}");
             if(atual != NULL){
-                fprintf(f, ",\n");
+                fprintf(f, ",");
             }
         }
+        fprintf(f, "\n");
     }
+    fprintf(f, "]");
     fclose(f);
     return true;
 }
@@ -180,12 +191,13 @@ void carregar_lista(LISTA_PACIENTE *lista){
             if(strstr(buffer, "\"id\":")){
                 sscanf(buffer, "%*[^:]: %d", &id);
             }else if(strstr(buffer, "\"nome\":")){
-                sscanf(buffer, "%*[^:]: %s", nome);
+                sscanf(buffer, "%*[^:]: \"%[^\"]", nome);
                 paciente = paciente_criar(nome, lista, id);
-            }else if(strstr(buffer, "\"historico\":")){
+            }else if(strstr(buffer, "\"histórico\":")){
                 while(fgets(buffer, 100, f) != NULL && !strstr(buffer, "}")){
                     if(strstr(buffer, "\"procedimento\":")){
-                        sscanf(buffer, "%*[^:]: %s", procedimento);
+                        sscanf(buffer, "%*[^:]: \"%[^\"]", procedimento);
+                        printf("Procedimento extraído: %s\n", procedimento);
                         historico_inserir(paciente_gethistorico(paciente), procedimento);
                     }
                 }
@@ -195,5 +207,6 @@ void carregar_lista(LISTA_PACIENTE *lista){
                 free(paciente);
             }
         }
+        fclose(f);
     }
 }

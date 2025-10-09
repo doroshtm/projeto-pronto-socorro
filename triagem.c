@@ -86,20 +86,23 @@ bool salvar_fila(TRIAGEM *triagem){
     if(f == NULL){
         return false;
     }
+    fprintf(f, "[");
     if(triagem != NULL && triagem->proximo != 0) {
-        fprintf(f,"{\n");
         for(int i = 0; i < triagem->proximo; ++i) {
             PACIENTE *paciente = triagem->pacientes[i];
             if(paciente == NULL) {
                 continue;
             }
-            fprintf(f,"\t\"id\": \"%d\",\n",paciente_getid(paciente));
-            fprintf(f,"\n}");
+            fprintf(f,"\n\t{\n");
+            fprintf(f,"\t\t\"id\": %d",paciente_getid(paciente));
+            fprintf(f,"\n\t}");
             if(i<triagem->proximo-1){
-                fprintf(f,",\n");
+                fprintf(f,",");
             }
         }
+        fprintf(f, "\n");
     }
+    fprintf(f, "]");
     fclose(f);
     return true;
 }
@@ -116,9 +119,12 @@ void carregar_fila(TRIAGEM *triagem, LISTA_PACIENTE *lista){
         while( fgets(buffer,100,f) != NULL){
             if(strstr(buffer, "\"id\":")){
                 sscanf(buffer,"%*[^:]: %d", &id);
+                paciente = lista_paciente_buscar(lista, id);
+                triagem_inserir_paciente(triagem, paciente);
             }
-            paciente = lista_paciente_buscar(lista, id);
-            triagem_inserir_paciente(triagem, paciente);
+            paciente = NULL;
+            free(paciente);
         }
+        fclose(f);
     }
 }

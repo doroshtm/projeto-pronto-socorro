@@ -147,18 +147,21 @@ void historico_inverter(HISTORICO *historico){
     if(aux == NULL || aux2==NULL){
         return;
     }
-    for(int i =0; i< historico->quantidadeProcedimentos; i++){
+    int quantidade = historico->quantidadeProcedimentos;
+    for(int i =0; i< quantidade; i++){
         historico_inserir(aux, historico->ultimoProcedimento->texto);
         historico_retirar(historico);
     }
-    for(int i =0; i< aux->quantidadeProcedimentos; i++){
+    for(int i =0; i< quantidade; i++){
         historico_inserir(aux2, aux->ultimoProcedimento->texto);
         historico_retirar(aux);
     }
-    for(int i =0; i< historico->quantidadeProcedimentos; i++){
+    for(int i =0; i< quantidade; i++){
         historico_inserir(historico, aux2->ultimoProcedimento->texto);
         historico_retirar(aux2);
     }
     free(aux);
+    aux = NULL;
     free(aux2);
+    aux2 = NULL;
 }
