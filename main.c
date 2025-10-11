@@ -1,3 +1,6 @@
+//Arthur de Castro Dias - 16855302
+//Gabriel Carraro Salzedas - 16827905
+//Kaua Benjamin Trombim Silva - 16830893
 #include<stdio.h>
 #include"triagem.h"
 #include"paciente.h"
